@@ -10,12 +10,42 @@ const Button = ({onClick, text}) => {
   )
 }
 
-const DisplayStats = ({category,number}) => {
+const StatisticsLine = ({category,number,postText}) => {
   return (
-    <>
-      <p>{category} {number}</p>
-    </>
+
+      <tr>
+        <td>{category} </td>
+        <td>{number} {postText}</td>
+        </tr>
+
   )
+}
+
+const Statistics = (props) => {
+  const all = props.good + props.neutral + props.bad
+  if(all === 0){
+    return (
+    <div>
+      <p>No feedback given</p>
+    </div>
+    )
+  }
+  else{
+    return (
+      <div>
+        <table>
+          <tbody>
+        <StatisticsLine category='good' number={props.good} ></StatisticsLine>
+        <StatisticsLine category='neutral' number={props.neutral} ></StatisticsLine>
+        <StatisticsLine category='bad' number={props.bad} ></StatisticsLine>
+        <StatisticsLine category='all' number={all} ></StatisticsLine>
+        <StatisticsLine category='average' number={(props.good-props.bad)/(all)} ></StatisticsLine>
+        <StatisticsLine category='positive' number={props.good*100/all} postText='%' ></StatisticsLine>
+         </tbody>
+        </table>
+      </div>
+    )
+  }
 }
 
 
@@ -33,12 +63,7 @@ const App = () => {
       <Button onClick={() => setBad(bad+1)} text='bad'></Button>
 
       <h1>statistics</h1>
-      <DisplayStats category='good' number={good}></DisplayStats>
-      <DisplayStats category='neutral' number={neutral}></DisplayStats>
-      <DisplayStats category='bad' number={bad}></DisplayStats>
-      <DisplayStats category='all' number={good+neutral+bad}></DisplayStats>
-      <DisplayStats category='average' number={(good-bad)/(good+neutral+bad) }></DisplayStats>
-      <DisplayStats category='positive' number={(good)/(good+neutral+bad)*100}>%</DisplayStats>
+      <Statistics good={good} neutral={neutral} bad={bad}></Statistics>
       
     
     </div>
