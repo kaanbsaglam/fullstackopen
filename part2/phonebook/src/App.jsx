@@ -3,13 +3,16 @@ import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
 import personService from './service/persons'
-import axios from 'axios'
+import Notification from './components/Notification'
+
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
-  const[searched, setSearched] = useState('')
+  const [searched, setSearched] = useState('')
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   useEffect(() => {
     personService.getAll().then(initialPersons => {
@@ -29,6 +32,11 @@ const App = () => {
         personService.update(oldPerson.id,updatedPerson).then(updatedPerson => {
           console.log(updatedPerson)
           setPersons(persons.map(person => person.id !== updatedPerson.id ? person : updatedPerson))
+        }).catch((error) => {
+          setErrorMessage(`Information of ${updatedPerson.name} has already been removed from the server`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          },5000)
         })
       }
       else{
@@ -44,6 +52,10 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        setSuccessMessage(`added ${personObject.name}`)
+        setTimeout(() => {
+        setSuccessMessage(null)
+        },5000)
       })
     }
   }
@@ -85,12 +97,10 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification.ErrorNotification message={errorMessage}/>
+      <Notification.SuccessNotification message={successMessage}/>
           <Filter handleSearchedChange={handleSearchedChange}/>
-
-
-
       <h3>add a new</h3>
-
       <PersonForm 
       addNewPerson={addNewPerson}
       newName={newName}
