@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import Persons from './components/Persons'
 import PersonForm from './components/PersonForm'
 import Filter from './components/Filter'
+import personService from './service/persons'
 import axios from 'axios'
 
 const App = () => {
@@ -11,10 +12,8 @@ const App = () => {
   const[searched, setSearched] = useState('')
 
   useEffect(() => {
-    console.log("effect")
-    axios.get('http://localhost:3001/persons').then(response => {
-      console.log("inside then")
-      setPersons(response.data)
+    personService.getAll().then(initialPersons => {
+      setPersons(initialPersons)
     })
   },[])
 
@@ -22,20 +21,41 @@ const App = () => {
   const addNewPerson = (event) => {
     event.preventDefault()
     if(persons.some((person) => person.name == newName)){
-      alertSameNameExists()
-
+      if(confirmNumberReplacement(newName)){
+        const oldPerson = persons.find(person => person.name == newName)
+        const updatedPerson = {
+          ...oldPerson, number:newNumber
+        }
+        personService.update(oldPerson.id,updatedPerson).then(updatedPerson => {
+          console.log(updatedPerson)
+          setPersons(persons.map(person => person.id !== updatedPerson.id ? person : updatedPerson))
+        })
+      }
+      else{
+        // i dont know whether or not its better to clear the name and number inputs if user declines
+      }
     }
     else{
       const personObject = {
         name: newName,
         number: newNumber,
-        id: persons.length + 1
       }
-      setPersons(persons.concat(personObject))
-      setNewName('')
-      setNewNumber('')
+      personService.create(personObject).then(returnedPerson => {
+        setPersons(persons.concat(returnedPerson))
+        setNewName('')
+        setNewNumber('')
+      })
     }
   }
+
+  const deletePerson = (id) => {
+    // TODO: maybe check if person with id exists
+
+    if(window.confirm(`Delete ${persons.find(person => person.id === id).name} ?`))
+    personService.remove(id).then(deletedPerson => {
+      setPersons(persons.filter(person => person.id != id))
+    })
+  } 
 
   const handleNameChange = (event) => {
     setNewName(event.target.value)
@@ -51,8 +71,8 @@ const App = () => {
 
   
 
-  const alertSameNameExists = () => {
-    alert(`${newName} is already added to phonebook`)
+  const confirmNumberReplacement = (name) => {
+    return window.confirm(`${name} is already added to phonebook, replace the old number with the new one?`)
   }
 
   const filteredPersons = (searched == '') 
@@ -79,7 +99,7 @@ const App = () => {
       handleNumberChange={handleNumberChange}
       />
       <h3>Numbers</h3>
-      <Persons persons={filteredPersons}/>
+      <Persons persons={filteredPersons} onDelete={deletePerson} />
     </div>
   )
 }

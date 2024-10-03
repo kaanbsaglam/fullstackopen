@@ -1,6 +1,6 @@
-const Person = (props) => {
+const Person = ({person, onDelete}) => {
     return(
-        <p>{props.name} {props.number}</p>
+        <p>{person.name} {person.number}<button onClick={() => onDelete(person.id)}>Delete</button></p>
     )
 }
 
