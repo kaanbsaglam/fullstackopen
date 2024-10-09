@@ -18,7 +18,6 @@ function App() {
       .getAll()
       .then((allCountries => {
         setCountries(allCountries)
-        
       }
       ))
   },[])
@@ -27,11 +26,16 @@ function App() {
     setSearched(event.target.value)
   }
 
+  const handleShow = (commonName) => {
+    setSearched(commonName)
+  }
 
+ // i can pass the searched value to Filter if we want to reflect it in the Filter form
   return (
     <div>
       <Filter handleSearchedChange={handleSearchedChange}/>
-      <Countries countries={filteredCountries}/>
+      <Countries countries={filteredCountries} handleShow={handleShow}/>
+
     </div>
   )
 }
