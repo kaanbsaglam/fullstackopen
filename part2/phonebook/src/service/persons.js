@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:3001/persons'
+const baseUrl = 'http://localhost:3001/api/persons' // or add proxy to the vite.config.js file
 
 const getAll = () => {
     const request = axios.get(baseUrl)
