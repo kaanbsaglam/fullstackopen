@@ -30,10 +30,16 @@ const App = () => {
           ...oldPerson, number:newNumber
         }
         personService.update(oldPerson.id,updatedPerson).then(updatedPerson => {
-          console.log(updatedPerson)
           setPersons(persons.map(person => person.id !== updatedPerson.id ? person : updatedPerson))
+          setNewName('')
+          setNewNumber('')
+          setSuccessMessage(`changed ${oldPerson.name}'s number, from ${oldPerson.number} to ${updatedPerson.number}`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          },5000)
         }).catch((error) => {
-          setErrorMessage(`Information of ${updatedPerson.name} has already been removed from the server`)
+          setErrorMessage(error.response.data.error)
+/*           setErrorMessage(`Information of ${updatedPerson.name} has already been removed from the server`) */
           setTimeout(() => {
             setErrorMessage(null)
           },5000)
@@ -57,6 +63,12 @@ const App = () => {
         setSuccessMessage(null)
         },5000)
       })
+      .catch(error => {
+        setErrorMessage(error.response.data.error)
+        setTimeout(()=> {
+          setErrorMessage(null)
+        },5000)
+      })
     }
   }
 
@@ -64,7 +76,7 @@ const App = () => {
     // TODO: maybe check if person with id exists
 
     if(window.confirm(`Delete ${persons.find(person => person.id === id).name} ?`))
-    personService.remove(id).then(deletedPerson => {
+    personService.remove(id).then(() => {
       setPersons(persons.filter(person => person.id != id))
     })
   } 

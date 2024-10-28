@@ -1,6 +1,11 @@
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:3001/api/persons' // or add proxy to the vite.config.js file
+const PORT = process.env.PORT || 3001
+/* const baseUrl = `http://localhost:${PORT}/api/persons` // or add proxy to the vite.config.js file */
+
+const baseUrl = process.env.NODE_ENV === 'production'  // doesnt work for some reason
+  ? 'https://fullstackopen-part3-kq6h.onrender.com/api/persons'
+  : `http://localhost:${PORT}/api/persons`;
 
 const getAll = () => {
     const request = axios.get(baseUrl)
