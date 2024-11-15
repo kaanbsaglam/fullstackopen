@@ -1,9 +1,11 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImticyIsImlkIjoiNjczNjNiYTQzODhiM2I0OTU3Njg4OGQyIiwiaWF0IjoxNzMxNjA3NDgyfQ.5c3mPNx1TmE0bg-V911BMFN4P3tJ-G7n5mjxlA8rn0U
+
 
 {
-    "title": "first",
-    "author": "me",
-    "url": "lol.com",
-    "likes": 3
+    "title": "aasd",
+    "author": "medasasdda34sdasd",
+    "url": "loasdalas.c43oasm",
+    "likes": 324
 }
