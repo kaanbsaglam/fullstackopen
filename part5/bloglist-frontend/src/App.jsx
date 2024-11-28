@@ -1,10 +1,11 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef} from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Togglable from './components/Togglable'
 
 
 
@@ -14,10 +15,9 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const [newTitle, setNewTitle] = useState('')
-  const [newAuthor, setNewAuthor] = useState('')
-  const [newUrl, setNewUrl] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
+
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -85,36 +85,19 @@ const App = () => {
     }
   }
 
-  const handleTitleChange = (event) => {
-    setNewTitle(event.target.value)
-  }
 
-  const handleAuthorChange = (event) => {
-    setNewAuthor(event.target.value)
-  }
 
-  const handleUrlChange = (event) => {
-    setNewUrl(event.target.value)
-  }
-
-  const createNewBlog = async (event) => {
-    event.preventDefault()
+  const createNewBlog = async (blogObject) => {
     try {
-      const newBlog = await blogService.create({
-        title: newTitle,
-        author: newAuthor,
-        url: newUrl
-      })
-      setNotificationMessage(`Created a new blog: ${newTitle} ${newAuthor}`)
+      const newBlog = await blogService.create(blogObject)
+      setNotificationMessage(`Created a new blog: ${newBlog.title} ${newBlog.author}`)
       setTimeout(() => {
         setNotificationMessage(null)
       },3000)
-      setNewTitle('')
-      setNewAuthor('')
-      setNewUrl('')
+      blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(newBlog))
     } catch (error) {
-      setNotificationMessage(error.response.data.error)
+      setNotificationMessage(error.response.data.error) //i should check if this null and write something else if so
       setTimeout(() => {
         setNotificationMessage(null)
       },3000)
@@ -144,16 +127,11 @@ const App = () => {
       <h2>blogs</h2>
       <Notification message={notificationMessage}/>
       <p>{user.username} logged in <button onClick={handleLogout}>logout</button></p>
-      
-      <BlogForm
-        addNewBlog={createNewBlog}
-        newTitle={newTitle}
-        handleTitleChange={handleTitleChange}
-        newAuthor={newAuthor}
-        handleAuthorChange={handleAuthorChange}
-        newUrl={newUrl}
-        handleUrlChange={handleUrlChange}
-      />
+      <Togglable buttonLabel="create new blog" ref={blogFormRef}>
+        <BlogForm
+          createNewBlog={createNewBlog}
+        />
+      </Togglable>
 
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
