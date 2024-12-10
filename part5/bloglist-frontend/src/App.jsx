@@ -9,6 +9,7 @@ import Togglable from './components/Togglable'
 
 
 
+
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
@@ -104,6 +105,44 @@ const App = () => {
     }
   }
 
+  const updateBlog = async (id, blogObject) => {
+    try{
+      const updatedBlog = await blogService.update(id, blogObject)
+      setNotificationMessage(`Liked blog: ${updatedBlog.title} ${updatedBlog.author}`)
+      setTimeout(() => {
+        setNotificationMessage(null)
+      },3000)
+      setBlogs(blogs.map(blog => blog.id === id ? updatedBlog : blog))
+
+    }
+    catch(error){
+      setNotificationMessage("error encountered while trying to like the post") 
+      setTimeout(() => {
+        setNotificationMessage(null)
+      },3000)
+    }
+  }
+
+
+  const deleteBlog = async (id) => {
+    try{
+      const blogToDelete = blogs.find(blog => blog.id === id)
+      if(window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`)){
+        const deletedBlog = await blogService.remove(id)
+        setBlogs(blogs.filter(blog => blog.id !== id))
+        setNotificationMessage(`removed blog: ${deletedBlog.title} ${deletedBlog.author}`)
+        setTimeout(() => {
+          setNotificationMessage(null)
+        },3000)
+      }
+    }
+    catch(error){
+      setNotificationMessage("error encountered while trying to delete the post") 
+      setTimeout(() => {
+        setNotificationMessage(null)
+      },3000)
+    }
+  }
 
 
 
@@ -133,8 +172,8 @@ const App = () => {
         />
       </Togglable>
 
-      {blogs.map(blog =>
-        <Blog key={blog.id} blog={blog} />
+      {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
+        <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={deleteBlog} />
       )}
     </div>
   )
