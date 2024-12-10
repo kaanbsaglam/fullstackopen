@@ -1,5 +1,6 @@
-import { useState } from "react"
-const Blog = ({ blog, updateBlog, removeBlog}) => {
+import PropTypes from 'prop-types'
+import { useState } from 'react'
+const Blog = ({ blog, updateBlog, removeBlog }) => {
 
   const blogStyle = {
     paddingTop: 10,
@@ -17,7 +18,7 @@ const Blog = ({ blog, updateBlog, removeBlog}) => {
       likes: blog.likes + 1,
       userid: blog.user.id
     }
-    await updateBlog(blog.id,updatedBlog)
+    await updateBlog(blog.id, updatedBlog)
   }
 
   const handleDelete = async () => {
@@ -26,19 +27,26 @@ const Blog = ({ blog, updateBlog, removeBlog}) => {
 
   const [isDetailed, setDetailed] = useState(false)
   return (
-  <div style={blogStyle}>
-    {blog.title} {blog.author} 
-    <button onClick={() => setDetailed(!isDetailed)}>{isDetailed?"hide":"view"}</button>
-    {isDetailed && (
-      <div>
-        <div>{blog.url}</div>
-        <div>likes: {blog.likes} <button onClick={handleLike}>like</button></div>
-        <div>{blog.user.name}</div>
-        <button onClick={handleDelete}>remove</button>
-      </div>
-    )}
-    
-  </div>  
-)}
+    <div style={blogStyle}>
+      {blog.title} {blog.author}
+      <button onClick={() => setDetailed(!isDetailed)}>{isDetailed ? "hide" : "view"}</button>
+      {isDetailed && (
+        <div>
+          <div>{blog.url}</div>
+          <div>likes: {blog.likes} <button onClick={handleLike}>like</button></div>
+          <div>{blog.user.name}</div>
+          <button onClick={handleDelete}>remove</button>
+        </div>
+      )}
+
+    </div>
+  )
+}
+
+Blog.propTypes = {
+  blog: PropTypes.object.isRequired,
+  updateBlog: PropTypes.func.isRequired,
+  removeBlog: PropTypes.func.isRequired
+}
 
 export default Blog

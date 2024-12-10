@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef} from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Blog from './components/Blog'
 import LoginForm from './components/LoginForm'
 import BlogForm from './components/BlogForm'
@@ -55,7 +55,7 @@ const App = () => {
       setNotificationMessage(`Successfully logged in as ${username}`)
       setTimeout(() => {
         setNotificationMessage(null)
-      },3000)
+      }, 3000)
       setUser(loggedInUser)
       setUsername('')
       setPassword('')
@@ -63,26 +63,26 @@ const App = () => {
       setNotificationMessage("wrong username or password")
       setTimeout(() => {
         setNotificationMessage(null)
-      },3000)
+      }, 3000)
     }
 
   }
 
 
   const handleLogout = () => {
-    try{
-    window.localStorage.removeItem('loggedBloglistUser')
-    blogService.setToken(null)
-    setUser(null)
-    setNotificationMessage("user successfully logged out.")
-    setTimeout(() => {
-      setNotificationMessage(null)
-    },3000)
-    }catch(error){
+    try {
+      window.localStorage.removeItem('loggedBloglistUser')
+      blogService.setToken(null)
+      setUser(null)
+      setNotificationMessage("user successfully logged out.")
+      setTimeout(() => {
+        setNotificationMessage(null)
+      }, 3000)
+    } catch (error) {
       setNotificationMessage("error logging out")
       setTimeout(() => {
         setNotificationMessage(null)
-      },3000)
+      }, 3000)
     }
   }
 
@@ -94,53 +94,53 @@ const App = () => {
       setNotificationMessage(`Created a new blog: ${newBlog.title} ${newBlog.author}`)
       setTimeout(() => {
         setNotificationMessage(null)
-      },3000)
+      }, 3000)
       blogFormRef.current.toggleVisibility()
       setBlogs(blogs.concat(newBlog))
     } catch (error) {
       setNotificationMessage(error.response.data.error) //i should check if this null and write something else if so
       setTimeout(() => {
         setNotificationMessage(null)
-      },3000)
+      }, 3000)
     }
   }
 
   const updateBlog = async (id, blogObject) => {
-    try{
+    try {
       const updatedBlog = await blogService.update(id, blogObject)
       setNotificationMessage(`Liked blog: ${updatedBlog.title} ${updatedBlog.author}`)
       setTimeout(() => {
         setNotificationMessage(null)
-      },3000)
+      }, 3000)
       setBlogs(blogs.map(blog => blog.id === id ? updatedBlog : blog))
 
     }
-    catch(error){
-      setNotificationMessage("error encountered while trying to like the post") 
+    catch (error) {
+      setNotificationMessage("error encountered while trying to like the post")
       setTimeout(() => {
         setNotificationMessage(null)
-      },3000)
+      }, 3000)
     }
   }
 
 
   const deleteBlog = async (id) => {
-    try{
+    try {
       const blogToDelete = blogs.find(blog => blog.id === id)
-      if(window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`)){
-        const deletedBlog = await blogService.remove(id)
+      if (window.confirm(`Remove blog ${blogToDelete.title} by ${blogToDelete.author}`)) {
+        await blogService.remove(id)
         setBlogs(blogs.filter(blog => blog.id !== id))
-        setNotificationMessage(`removed blog: ${deletedBlog.title} ${deletedBlog.author}`)
+        setNotificationMessage(`removed blog: ${blogToDelete.title} ${blogToDelete.author}`)
         setTimeout(() => {
           setNotificationMessage(null)
-        },3000)
+        }, 3000)
       }
     }
-    catch(error){
-      setNotificationMessage("error encountered while trying to delete the post") 
+    catch (error) {
+      setNotificationMessage("error encountered while trying to delete the post")
       setTimeout(() => {
         setNotificationMessage(null)
-      },3000)
+      }, 3000)
     }
   }
 
@@ -150,7 +150,7 @@ const App = () => {
     return (
       <div>
         <h2>Log in to application</h2>
-        <Notification message={notificationMessage}/>
+        <Notification message={notificationMessage} />
         <LoginForm
           loginUser={handleLogin}
           username={username}
@@ -164,7 +164,7 @@ const App = () => {
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={notificationMessage}/>
+      <Notification message={notificationMessage} />
       <p>{user.username} logged in <button onClick={handleLogout}>logout</button></p>
       <Togglable buttonLabel="create new blog" ref={blogFormRef}>
         <BlogForm
@@ -172,7 +172,7 @@ const App = () => {
         />
       </Togglable>
 
-      {blogs.sort((a,b) => b.likes - a.likes).map(blog =>
+      {blogs.sort((a, b) => b.likes - a.likes).map(blog =>
         <Blog key={blog.id} blog={blog} updateBlog={updateBlog} removeBlog={deleteBlog} />
       )}
     </div>
