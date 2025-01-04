@@ -27,7 +27,7 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
 
   const [isDetailed, setDetailed] = useState(false)
   return (
-    <div style={blogStyle}>
+    <div style={blogStyle} className='blog'>
       {blog.title} {blog.author}
       <button onClick={() => setDetailed(!isDetailed)}>{isDetailed ? "hide" : "view"}</button>
       {isDetailed && (
