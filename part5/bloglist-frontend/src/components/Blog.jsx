@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import { useState } from 'react'
-const Blog = ({ blog, updateBlog, removeBlog }) => {
+const Blog = ({ blog, updateBlog, removeBlog, currentUser }) => {
 
   const blogStyle = {
     paddingTop: 10,
@@ -25,6 +25,7 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
     await removeBlog(blog.id)
   }
 
+
   const [isDetailed, setDetailed] = useState(false)
   return (
     <div style={blogStyle} className='blog'>
@@ -35,7 +36,9 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
           <div>{blog.url}</div>
           <div>likes: {blog.likes} <button onClick={handleLike}>like</button></div>
           <div>{blog.user.name}</div>
-          <button onClick={handleDelete}>remove</button>
+          {currentUser.username === blog.user.username && (
+            <button onClick={handleDelete}>remove</button>
+          )}
         </div>
       )}
 
@@ -46,7 +49,8 @@ const Blog = ({ blog, updateBlog, removeBlog }) => {
 Blog.propTypes = {
   blog: PropTypes.object.isRequired,
   updateBlog: PropTypes.func.isRequired,
-  removeBlog: PropTypes.func.isRequired
+  removeBlog: PropTypes.func.isRequired,
+  currentUser: PropTypes.object.isRequired,
 }
 
 export default Blog
