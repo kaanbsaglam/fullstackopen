@@ -13,4 +13,11 @@ const createNew = async (content) => {
   return response.data
 }
 
-export default {getAll, createNew }
+const update = async (id, content, votes) => {
+  const updatedAnecdote = {content, votes}
+  const response = await axios.put(`${baseUrl}/${id}`, updatedAnecdote)
+  return response.data   // i dont know if i shouldve used patch and only provide id
+}
+
+
+export default {getAll, createNew, update }
