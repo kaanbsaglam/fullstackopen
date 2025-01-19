@@ -2,16 +2,24 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import {useQuery, useQueryClient, useMutation} from '@tanstack/react-query'
 import { getAnecdotes, createAnecdote, updateAnecdote } from './requests/requests'
+import { useNotificationDispatch } from './NotificationContext'
 
 const App = () => {
 
   const queryClient = useQueryClient()
+  const notificationDispatch = useNotificationDispatch()
 
   const newAnecdoteMutation = useMutation({
     mutationFn: createAnecdote,
     onSuccess: (newAnecdote) => {
       const anecdotes = queryClient.getQueryData(['anecdotes'])
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(newAnecdote))
+      notificationDispatch({type: 'SET', payload: `anecdote ${newAnecdote.content} added`})
+      setTimeout(() => notificationDispatch({type:'CLEAR'}), 5000)
+    },
+    onError: (error) => {
+      notificationDispatch({type: 'SET', payload: `Error: ${error.response.data.error}`})
+      setTimeout(() => notificationDispatch({type:'CLEAR'}),5000)
     }
   })
 
@@ -28,12 +36,10 @@ const App = () => {
         anecdote.id === updatedAnecdote.id ? updatedAnecdote : anecdote
       )
       queryClient.setQueryData(['anecdotes'],updatedAnecdotes)
+      notificationDispatch({type: 'SET', payload: `you voted ${updatedAnecdote.content}`})
+      setTimeout(() => notificationDispatch({type:'CLEAR'}), 5000)
     }
   })
-
-
-
-
 
   const handleVote = (anecdote) => {
     updateAnecdoteMutation.mutate({...anecdote, votes:anecdote.votes+1})
